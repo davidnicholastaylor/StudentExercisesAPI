@@ -29,7 +29,7 @@ namespace StudentExercisesAPI.Controllers
         }
         // GET api/students?q=Taco
         [HttpGet]
-        public async Task<IActionResult> Get(string q)
+        public async Task<IActionResult> Get(string q, string orderby = "desc")
         {
             string sql = @"
             SELECT
@@ -37,7 +37,15 @@ namespace StudentExercisesAPI.Controllers
                 c.Name
             FROM Cohort c
             WHERE 1=1
-            ";  
+            ";
+
+            if (orderby != null)
+            {
+                string isOrdered = $@"
+                    ORDER BY Name {orderby} 
+                ";
+                sql = $"{sql} {isOrdered}";
+            }
 
             Console.WriteLine(sql);
             using (IDbConnection conn = Connection)
@@ -69,7 +77,7 @@ namespace StudentExercisesAPI.Controllers
         public async Task<IActionResult> Post([FromBody] Cohort cohort)
         {
             string sql = $@"INSERT INTO Cohort 
-            (CohortName)
+            (Name)
             VALUES
             (
                 '{cohort.Name}'
@@ -88,7 +96,7 @@ namespace StudentExercisesAPI.Controllers
         {
             string sql = $@"
             UPDATE Cohort
-            SET CohortName = '{cohort.Name}'
+            SET Name = '{cohort.Name}'
             ";
             try
             {

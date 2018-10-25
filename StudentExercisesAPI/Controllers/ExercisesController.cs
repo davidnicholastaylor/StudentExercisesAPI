@@ -33,7 +33,7 @@ namespace StudentExercisesAPI.Controllers
 
         // GET api/students?q=Taco
         [HttpGet]
-        public async Task<IActionResult> Get(string q)
+        public async Task<IActionResult> Get(string q, string orderby)
         {
             string sql = @"
             SELECT
@@ -51,6 +51,14 @@ namespace StudentExercisesAPI.Controllers
                     OR e.Language LIKE '%{q}%'
                 ";
                 sql = $"{sql} {isQ}";
+            }
+
+            if (orderby != null)
+            {
+                string isOrdered = $@"
+                    ORDER BY Id {orderby} 
+                ";
+                sql = $"{sql} {isOrdered}";
             }
 
             Console.WriteLine(sql);
